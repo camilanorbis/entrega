@@ -16,7 +16,7 @@ export const userSchema = new Schema ({
         required: true,
         unique: true,
         validate: {
-            validator: validator.isEmail(valor),                
+            validator: (valor) => { return validator.isEmail(valor) },          
             message: "Email is not valid"
         }
     },
@@ -37,13 +37,13 @@ export const userSchema = new Schema ({
     }
 })
 
-userSchema.pre("save", async function (next) {
+/*userSchema.pre("save", async function (next) {
     if (!this.isModified("password")) return next()
 
     const salt = await bcrypt.genSalt(10)
     this.password = await bcrypt.hash(this.password, salt)
     next()
-})
+})*/
 
 const UserModel = model("User",userSchema)
 export default UserModel
