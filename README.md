@@ -4,6 +4,12 @@ Este proyecto implementa un backend con **Express**, vistas con **Handlebars**, 
 
 ---
 
+## Variables de entorno
+
+Para poder correr la aplicación correctamente, es necesario crear un archivo .env en la raíz del proyecto. Este archivo debe generarse a partir de .env.example y completarse con los valores correspondientes a cada entorno (credenciales, secretos y configuraciones). El archivo .env no se incluye en el repositorio por motivos de seguridad.
+
+---
+
 ## Rutas Principales
 
 ### **`/`**
