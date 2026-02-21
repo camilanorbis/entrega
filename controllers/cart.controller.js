@@ -1,5 +1,7 @@
 import { cartService } from "../service/index.js";
 
+//TODO: centralizar manejo de errores
+
 export const createCart = async (req,res) => {
     try {
         const response = await cartService.createCart()
@@ -109,7 +111,7 @@ export const deleteProductsFromCart = async (req,res) => {
     try {
         const { cid } = req.params
         const updatedCart = await cartService.deleteAllProducts(cid)
-        console.log(updatedCart)
+
         if (!updatedCart)
             return res.status(400).json({ status: 'error', payload: 'No fue posible actualizar el carrito.'})
         if (updatedCart.error)
@@ -119,5 +121,24 @@ export const deleteProductsFromCart = async (req,res) => {
 
     } catch (error) {
         return res.status(500).json({ status: 'error', payload: `No fue posible actualizar el carrito. Detalle: ${error}` })
+    }
+}
+
+export const generatePurchaseTicket = async (req,res) => {
+    try {
+        const { cid } = req.params
+        const user = req.user
+        const response = await cartService.generatePurchase(cid,user)
+        console.log("response:", response)
+        if (!response)
+            return res.status(400).json({ status: 'error', payload: 'No fue posible generar el ticket de compra.'})
+        if (response.error)
+            return res.status(404).json({ status: 'error', payload: response.error })
+
+        return res.status(200).json({ status: 'success', payload: response })
+
+        
+    } catch (error) {
+        return res.status(500).json({ status: 'error', payload: 'No fue posible generar ticket de compra'})
     }
 }

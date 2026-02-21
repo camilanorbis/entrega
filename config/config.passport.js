@@ -4,6 +4,7 @@ import SessionDAO from "../dao/SessionDAO.js"
 import CartDAO from "../dao/CartDAO.js"
 import { createHash, validaPass } from "../utils/user.utils.js"
 import passportJWT from "passport-jwt"
+import { config } from "./config.js"
 
 
 const sessionDao = new SessionDAO()
@@ -84,14 +85,14 @@ export const passportInit = () => {
 
     passport.use("current", new passportJWT.Strategy(
         { 
-            secretOrKey: process.env.JWT_SECRET, 
+            secretOrKey: config.JWT_SECRET, 
             jwtFromRequest: passportJWT.ExtractJwt.fromExtractors([getToken]) 
         }, 
         async(jwt_payload, done)=>{
             try {
                 const user = await sessionDao.getUserByFilter({ _id: jwt_payload.id })
                 if (!user) return done(null,false)
-
+                    
                 return done(null, user)
             } catch (error) {
                 return done(error)

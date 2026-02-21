@@ -1,6 +1,5 @@
 import CartModel from "../models/cart.model.js";
 
-
 export default class CartDAO {
 
     async createCart () {

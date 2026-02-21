@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken"
 import UserDTO from "../DTO/UserDTO.js"
+import { config } from "../config/config.js"
 
 export const createUser = async (req,res) => {
     return res.status(201).json({ status:'success', payload: req.user })
@@ -17,7 +18,7 @@ export const getErrorLogin = async (req,res) => {
 
 export const login = async (req,res) => {
     const user = req.user
-    const token = jwt.sign({ id: user._id, email: user.email, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1h" })
+    const token = jwt.sign({ id: user._id, email: user.email, role: user.role }, config.JWT_SECRET, { expiresIn: "1h" })
 
     res.cookie("token", token, { httpOnly: true, secure: false, maxAge: 60 * 60 * 1000 });
     res.setHeader('Content-Type','application/json')

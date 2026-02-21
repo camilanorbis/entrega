@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { config } from "../config/config.js";
 import passport from "passport";
 
 //deprecated
@@ -9,7 +10,7 @@ export const authJWT = (req, res, next) => {
     }
 
     try {
-        const jwtContent = jwt.verify(token, process.env.JWT_SECRET);
+        const jwtContent = jwt.verify(token, config.JWT_SECRET);
         req.user = jwtContent;
         next();
     } catch (error) {

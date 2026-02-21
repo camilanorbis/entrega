@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose'
 
 export const ticketSchema = new Schema ({
-    nroComp: {
+    ticketNumber: {
         type: String,
         unique: true,
         required: true

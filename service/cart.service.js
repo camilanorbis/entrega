@@ -1,10 +1,13 @@
 import { Types } from "mongoose";
+import { nanoid } from "nanoid";
+import TicketDTO from "../DTO/TicketDTO.js";
 
 export default class CartService {
 
-    constructor (cartDao,productDao) {
+    constructor (cartDao,productDao,ticketDao) {
         this.cartDao = cartDao
         this.productDao = productDao
+        this.ticketDao = ticketDao
     }
 
     async createCart () {
@@ -107,6 +110,64 @@ export default class CartService {
 
         await this.cartDao.updateCart({ _id: cid }, { $set: { products: [] }})
         return await this.cartDao.getCartByFilter({ _id: cid })
+    }
+
+    async generatePurchase (cid,user) {
+        //obtengo carrito
+        const cart = await this.cartDao.getCartByFilter({ _id: cid })
+        await cart.populate("products.productId")
+        if (!cart) {
+            return ({ 'error': `El carrito con id ${cid} no existe` })
+        }
+
+        //chequeo que cada producto tenga el stock necesario
+        //TODO: si algun producto no tiene stock suficiente generar ticket por los que si lo tengan
+        for (const item of cart.products) {
+            const product = item.productId
+            
+            if (product.stock < item.quantity) {
+                result = ({ 'error': `Stock insuficiente para ${product.title}`})
+                return result
+            }
+        }
+
+        //si todos los productos tienen stock necesario, para cada uno resto el stock que se agrego al carrito
+        for (const item of cart.products) {
+            await this.productDao.modifyProduct(item.productId._id, { $inc: { stock: -item.quantity }})
+        }
+
+        //calculo precio total del ticket
+        let totalAmount = 0
+        for (const item of cart.products) {
+            totalAmount += item.productId.price * item.quantity
+        }
+
+        //genero el ticket 
+        const newTicket = await this.ticketDao.createTicket ({
+            ticketNumber: nanoid(8),
+            products: cart.products.map(p => ({
+                productId: p.productId._id,
+                quantity: p.quantity
+            })),
+            userId: user._id,
+            date: new Date(),
+            totalAmount
+        })
+
+        // populo el usuario y productos para poder obtener el ticket final para el dto. 
+        const ticketDoc = await this.ticketDao.getTicketByFilter(
+                                                        { _id: newTicket._id },
+                                                        true,
+                                                        [
+                                                            { path: "products.productId", select: "title" },
+                                                            { path: "userId", select: "first_name last_name" }
+                                                        ]
+                                                    )
+
+        return new TicketDTO(ticketDoc)
+
+        //vaciar carrito. 
+        
     }
 
 }

@@ -2,6 +2,8 @@ import ProductDAO from "../dao/ProductDAO.js";
 
 const productDao = new ProductDAO();
 
+//TODO: centralizar manejo de errores
+
 export const createProduct = async (req,res) => {
     try {
         const product = req.body;
@@ -78,7 +80,7 @@ export const modifyProduct = async (req,res) => {
     try {
         const { pid } = req.params
         const product = req.body
-        const response = await productDao.modifyProduct(pid,product)
+        const response = await productDao.modifyProduct(pid,{ $set: product })
 
         if (response) {
             return res.status(200).json({ status: 'success', payload: `El producto con id ${pid} fue modificado correctamente` })

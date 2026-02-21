@@ -6,8 +6,8 @@ export default class ProductDAO {
         return await ProductModel.create(newProduct)
     }
 
-    async modifyProduct (id,productModified) {
-        return await ProductModel.updateOne({ _id: id }, { $set: productModified  })
+    async modifyProduct (id, update) {
+        return await ProductModel.updateOne({ _id: id }, update )
     }
 
     async getProducts (filter,limit,skip,sort) {
@@ -29,7 +29,7 @@ export default class ProductDAO {
         return await ProductModel.deleteOne({ _id: id })
     }
 
-    //TODO mover a controler?
+    //TODO mover a controler
     async countDocuments (filter) {
         if (filter != null){
             return await ProductModel.countDocuments(filter)

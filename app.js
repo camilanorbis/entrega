@@ -8,17 +8,15 @@ import http from "http"
 import handlebars from "express-handlebars"
 import { connectDB } from "./config/db.js"
 import cookieParser from "cookie-parser";
-import dotenv from "dotenv";
 import passport from "passport";
 import { passportInit } from "./config/config.passport.js";
+import { config } from "./config/config.js"
 
-//TODO mover a config
-dotenv.config();
 
 //server definition
 const app = express();
 const servidor = http.createServer(app);
-const PORT = process.env.PORT;
+const PORT = config.PORT;
 
 //Servidor websockets -> responde solicitudes que vengan de ws://localhost:8080
 const servidorWS = new Server(servidor);
@@ -61,7 +59,7 @@ async function init() {
         console.log(`Serivdor iniciado en el puerto ${PORT}`)
     })
 
-    connectDB(process.env.MONGO_URL,process.env.DB_NAME)
+    connectDB(config.MONGO_URL,config.DB_NAME)
 
 }
 
