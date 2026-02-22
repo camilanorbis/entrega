@@ -38,14 +38,14 @@ export const addProductToCart = async (req,res) => {
         const { pid } = req.params
         const { cid } = req.params 
 
-        const updatedCart = await cartService.addProduct(cid,pid)
+        const response = await cartService.addProduct(cid,pid)
 
-        if (!updatedCart)
+        if (!response)
             return res.status(400).json({ status: 'error', payload: 'No fue posible agregar el producto al carrito.'})
-        if (updatedCart.error)
-            return res.status(404).json({ status: 'error', payload: updatedCart.error })
+        if (response.error)
+            return res.status(404).json({ status: 'error', payload: response.error })
         
-        return res.status(200).json({ status: 'success', payload: updatedCart });
+        return res.status(200).json({ status: 'success', payload: response });
 
     } catch (error) {
         return res.status(500).json({ status: 'error', payload: `No fue posible agregar el producto al carrito. Detalle: ${error}` })
@@ -55,14 +55,14 @@ export const addProductToCart = async (req,res) => {
 export const deleteProductFromCart = async (req,res) => {
     try {
         const { cid, pid } = req.params 
-        const updatedCart = await cartService.deleteProduct(cid,pid)
+        const response = await cartService.deleteProduct(cid,pid)
 
-        if (!updatedCart)
+        if (!response)
             return res.status(400).json({ status: 'error', payload: 'No fue posible eliminar el producto del carrito.'})
-        if (updatedCart.error)
-            return res.status(404).json({ status: 'error', payload: updatedCart.error })
+        if (response.error)
+            return res.status(404).json({ status: 'error', payload: response.error })
 
-        return res.status(200).json({ status: 'success', payload: updatedCart })
+        return res.status(200).json({ status: 'success', payload: response })
         
     } catch (error) {
         return res.status(500).json({ status: 'error', payload: `No fue posible eliminar el producto del carrito. Detalle: ${error}` })
@@ -75,7 +75,7 @@ export const updateCartProducts = async (req,res) => {
         const newProducts = req.body; 
 
         const response = await cartService.updateAllProducts(cid, newProducts)
-        console.log(response)
+
         if (!response)
             return res.status(400).json({ status: 'error', payload: 'No fue posible actualizar el carrito.'})
         if (response.error)
@@ -93,13 +93,13 @@ export const updateProductQuantity = async (req,res) => {
         const { cid, pid } = req.params
         const { quantity } = req.body
 
-        const updatedCart = await cartService.updateProductOnCart(cid,pid,quantity)
-        if (!updatedCart)
+        const response = await cartService.updateProductOnCart(cid,pid,quantity)
+        if (!response)
             return res.status(400).json({ status: 'error', payload: 'No fue posible actualizar el carrito.'})
-        if (updatedCart.error)
-            return res.status(404).json({ status: 'error', payload: updatedCart.error })
+        if (response.error)
+            return res.status(404).json({ status: 'error', payload: response.error })
 
-        return res.status(200).json({ status: 'success', payload: updatedCart })
+        return res.status(200).json({ status: 'success', payload: response })
 
     } catch (error) {
         return res.status(500).json({ status: 'error', payload: `No fue posible actualizar el carrito. Detalle: ${error}` })
@@ -110,14 +110,14 @@ export const updateProductQuantity = async (req,res) => {
 export const deleteProductsFromCart = async (req,res) => {
     try {
         const { cid } = req.params
-        const updatedCart = await cartService.deleteAllProducts(cid)
+        const response = await cartService.deleteAllProducts(cid)
 
-        if (!updatedCart)
+        if (!response)
             return res.status(400).json({ status: 'error', payload: 'No fue posible actualizar el carrito.'})
-        if (updatedCart.error)
-            return res.status(404).json({ status: 'error', payload: updatedCart.error })
+        if (response.error)
+            return res.status(404).json({ status: 'error', payload: response.error })
 
-        return res.status(200).json({ status: 'success', payload: updatedCart })
+        return res.status(200).json({ status: 'success', payload: response })
 
     } catch (error) {
         return res.status(500).json({ status: 'error', payload: `No fue posible actualizar el carrito. Detalle: ${error}` })
@@ -129,7 +129,7 @@ export const generatePurchaseTicket = async (req,res) => {
         const { cid } = req.params
         const user = req.user
         const response = await cartService.generatePurchase(cid,user)
-        console.log("response:", response)
+        
         if (!response)
             return res.status(400).json({ status: 'error', payload: 'No fue posible generar el ticket de compra.'})
         if (response.error)

@@ -85,21 +85,17 @@ export default class CartService {
     }
 
     async updateAllProducts (cid, newProducts) {
-        let result = null
         if (!Array.isArray(newProducts)) {
-            result = { 'error': 'El body debe ser un arreglo de productos' }
-            return result
+            return ({ 'error': 'El body debe ser un arreglo de productos' })
         }
 
         const cart = await this.cartDao.getCartByFilter({ _id: cid })
         if (!cart) {
-            result = { 'error': `El carrito con id ${cid} no existe` }
-            return result
+            return ({ 'error': `El carrito con id ${cid} no existe` })
         }
 
         await this.cartDao.updateCart({ _id: cid }, { $set: { products: newProducts }})
-        result = await this.cartDao.getCartByFilter({ _id: cid })
-        return result
+        return await this.cartDao.getCartByFilter({ _id: cid })
     }
 
     async deleteAllProducts (cid) {
@@ -127,6 +123,10 @@ export default class CartService {
             if (product.stock < item.quantity) {
                 cart.products = cart.products.filter(p => p !== item)
             }
+        }
+        
+        if (cart.products.length === 0) {
+            return ({ 'error': 'El carrito esta vació' })
         }
 
         //resto el stock de los productos del carrito
