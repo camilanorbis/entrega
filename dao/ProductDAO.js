@@ -29,7 +29,7 @@ export default class ProductDAO {
         return await ProductModel.deleteOne({ _id: id })
     }
 
-    //TODO mover a controler
+    //TODO: mover a controler
     async countDocuments (filter) {
         if (filter != null){
             return await ProductModel.countDocuments(filter)

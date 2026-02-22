@@ -45,7 +45,7 @@ Se deben recibir en el siguiente formato [{"productId": "productId", "quantity":
 Recibe desde el body { "quantity": x } y actualiza la cantidad de dicho producto en el carrito
 
 ### **POST `/api/carts/:cid/buy`**
-Realiza la compra de un carrito, siempre y cuando el usuario a quien pertenece el carrito este logueado y todos los productos del carrito esten disponibles en las cantidades indicadas. Devuelve el ticket de compra. 
+Realiza la compra de un carrito, siempre y cuando el usuario a quien pertenece el carrito este logueado y todos los productos del carrito esten disponibles en las cantidades indicadas, si algun producto no cuenta con stock suficiente se quita del carrito y se prosigue con la compra del mismo. Devuelve el ticket de compra. 
 
 ---
 
