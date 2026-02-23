@@ -1,4 +1,5 @@
 import { transport } from "../config/email.config.js"
+import { createHash, validaPass } from "../utils/user.utils.js"
 
 export default class SessionService {
 
@@ -10,8 +11,33 @@ export default class SessionService {
         return this.sessionDao.getUserByFilter(filter)
     }
 
-    async updateUser (filter,update) {
-        return this.sessionDao.updateUser(filter,update)
+    async updateUserPassword (token, password, confirmPassword) {
+        if (password !== confirmPassword) {
+            return ({ 'error': "Las contraseñas no coinciden" })
+        }
+        
+        const user = await this.sessionDao.getUserByFilter({
+            resetToken: token,
+            resetTokenExpires: { $gt: new Date() }
+        })
+        
+        if (!user) {
+            return ({ 'error': "Token inválido o expirado" })
+        }
+
+        const oldPassword = user.password
+        if (validaPass(password,oldPassword)){
+            return ({'error': 'La contraseña nueva no puede ser igual a la anterior'})
+        }
+
+        const hashedPassword = createHash(password)
+        return await this.sessionDao.updateUser(
+            { _id: user._id },
+            { 
+                $set: { password: hashedPassword },
+                $unset: { resetToken: "", resetTokenExpires: "" }
+            }
+        )
     }
 
     async saveResetToken (userId, token) {
