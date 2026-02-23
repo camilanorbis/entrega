@@ -98,6 +98,15 @@ Permite a un usuario autenticarse, el mismo debe proveer email y contraseña en 
 ### **GET `/api/sessions/current`**
 En caso de haber usuario autenticado, devuelve el username (email) y rol del mismo.
 
+### **POST `/api/sessions/forgot_password`**
+En caso de haber olvidado la contraseña se puede utilizar esta ruta, mandando en el body el email del usuario registrado en el siguiente formato: { "email": "usuarioregistrado@email.com" }, al ejecutarse el POST le llegará un email al usuario con el link para actualizar la contraseña, una vez el usuario ingrese nueva contraseña y la confirmación de la misma, y obtenga el mensaje de confirmación informando que la contraseña se actualizó correctamente, el usuario podrá iniciar sesión con la nueva contraseña.
+
+### **GET `/api/sessions//reset-password/:token`**
+La ruta que se ejecuta cuando el usuario ingresa al link enviado en el email de recupero de contraseña, esta ruta redirige a una vista en handlebars donde el usuario puede ver el formulario de actualización de contraseña.
+
+### **POST `/api/sessions/forgot_password`**
+La ruta que se ejecuta cuando el usuario envía el formulario de cambio de contraseña y lleva a cabo la lógica de la actualización de la contraseña en la base de datos.
+
 ---
 
 ## Vistas
