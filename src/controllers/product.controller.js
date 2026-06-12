@@ -1,27 +1,31 @@
 import ProductDAO from "../dao/ProductDAO.js";
+import { successResponse, errorResponse } from "../utils/apiResponse.js";
 
 const productDao = new ProductDAO();
 
-//TODO: centralizar manejo de errores
 
-export const createProduct = async (req,res) => {
+export const createProduct = async (req,res,next) => {
     try {
         const product = req.body;
         if (!validateProduct(product)){
-            return res.status(400).json({ status:'error', payload:'Faltan campos o hay formatos inválidos'})
+            return errorResponse(res, {statusCode: 400, message: 'Missing or invalid fields'})
         }
         const response = await productDao.createProduct(product)
-        return res.status(201).json({ status: 'success', payload: response === null ? 'Faltan campos o hay formatos inválidos' : response })
+
+        if (!response)
+            return errorResponse(res, {statusCode: 400, message: 'Missing or invalid fields'})
+        
+        return successResponse(res, {statusCode: 201, message: 'Product created successfully', payload: response})
     } catch (error) {
         if (error.name === "ValidationError") {
             const mensajes = Object.values(error.errors).map(err => err.message);
-            return res.status(400).json({ status: 'error', payload: mensajes.join(", ") });
+            return errorResponse(res, {statusCode: 400, message: mensajes.join(', ')})
         }
-        return res.status(500).json({ status: 'error', payload: 'No fue posible agregar el producto a la base de datos'})
+        next(error)
     }
 }
 
-export const getProducts = async (req,res) => {
+export const getProducts = async (req,res,next) => {
     try {
         let { limit = 10, page = 1, query, sort } = req.query
         let filter = {}
@@ -49,9 +53,8 @@ export const getProducts = async (req,res) => {
             : null;
 
         const response = await productDao.getProducts(filter,limit,skip,sort);
-        return res.status(200).json({ 
-            status: 'success', 
-            payload: response, 
+        return successResponse(res, {statusCode: 200, message: 'List of products successfully obtained', payload: {
+            productsList: response,
             totalPages: totalPages,
             prevPage: hasPrevPage ? page - 1 : null,
             nextPage: hasNextPage ? page + 1 : null,
@@ -60,63 +63,65 @@ export const getProducts = async (req,res) => {
             hasNextPage: hasNextPage,
             prevLink: prevLink,
             nextLink: nextLink
-        })
+        }})
     } catch (error){
-        return res.status(500).json({ status: 'error', payload: `No fue posible obtener los productos de la base de datos. Detalle: ${error}`})
+        next(error)
     }
 }
 
-export const getProductById = async (req,res) => {
+export const getProductById = async (req,res,next) => {
     try {
         const { pid } = req.params
         const response = await productDao.getProductByFilter({ _id: pid })
-        return res.status(200).json({ status: 'success', payload: response != null ? response : `El producto con id ${pid} no existe`})
+        
+        if (!response)
+            return errorResponse(res, {statusCode: 404, message: 'Product not found'})
+
+        return successResponse(res, {statusCode: 200, message: 'Product found', payload: response})
     } catch (error) {
-        return res.status(500).json({ status: 'error', payload: 'No fue posible obtener el producto'})
+        next(error)
     }
 }
 
-export const modifyProduct = async (req,res) => {
+export const modifyProduct = async (req,res,next) => {
     try {
         const { pid } = req.params
         const product = req.body
+
+        const originalProduct = await productDao.getProductByFilter({ _id: pid })
+
+        if (!originalProduct)
+            return errorResponse(res, {statusCode: 404, message: 'Product not found'})
+
         const response = await productDao.modifyProduct(pid,{ $set: product })
+        if (!response)
+            return errorResponse(res, {statusCode: 400, message: 'Error updating product'})
 
-        if (response) {
-            return res.status(200).json({ status: 'success', payload: `El producto con id ${pid} fue modificado correctamente` })
-        } else {
-            return res.status(404).json({ status: 'error', payload: `El producto con id ${pid} no existe o el campo que intenta modificar no forma parte del producto.` })
-        }
-
+        return successResponse(res, {statusCode: 200, message: 'Product updated successfully', payload: response})
     } catch (error) {
         if (error.name === "ValidationError") {
             const mensajes = Object.values(error.errors).map(err => err.message);
-
-            return res.status(400).json({ status: 'error', payload: mensajes.join(", ") });
+            return errorResponse(res, {statusCode: 400, message: mensajes.join(', ')})
         }
-        console.log(error)
-        return res.status(500).json({ status: 'error', payload: `No fue posible modificar el producto con id ${req.params.pid}`})
+        next(error)
     }
 }
 
-export const deleteProduct = async (req,res) => {
+export const deleteProduct = async (req,res,next) => {
     try {
         const { pid } = req.params
         const product = await productDao.getProductByFilter({ _id: pid })
 
-        if (product) {
-            const response = await productDao.deleteProduct(pid)
-            if (response.acknowledged) {
-                return res.status(200).json({ status: 'success', payload: `El producto con id ${pid} fue eliminado correctamente.` })
-            } else {
-                return res.status(400).json({ status: 'error', payload: `El producto con id ${pid} no pudo ser eliminado.` })
-            }
-        } else {
-            return res.status(400).json({ status: 'error', payload: `El producto con id ${pid} no existe.` })
-        }
+        if (!product)
+            return errorResponse(res, {statusCode: 404, message: 'Product not found'})
 
+        const response = await productDao.deleteProduct(pid)
+        if (!response.acknowledged)
+            return errorResponse(res, {statusCode: 400, message: 'Could not delete product'})
+
+        return successResponse(res, {statusCode: 200, message: 'Product deleted successfully', payload: response})
     } catch (error) {
-        return res.status(500).json({ status: 'error', payload: `No fue posible eliminar el producto con id ${req.params.pid}` })
+        next(error)
     }
 }
 

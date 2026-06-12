@@ -14,6 +14,10 @@ export default class CartService {
         return await this.cartDao.createCart()
     }
 
+    async getCartById (cid) {
+        return await this.cartDao.getCartByFilter({ _id: cid })
+    }
+
     async getCartWithProducts (cid) {
         const cart = await this.cartDao.getCartByFilter({ _id: cid })
         if (!cart) return null

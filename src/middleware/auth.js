@@ -1,12 +1,13 @@
 import jwt from "jsonwebtoken";
 import { config } from "../config/config.js";
 import passport from "passport";
+import { errorResponse } from "../utils/apiResponse.js";
 
 //deprecated
 export const authJWT = (req, res, next) => {
     const token = req.cookies.token;
     if (!token) {
-        return res.status(401).json({ status:'error', payload:'No hay usuario autenticado' });
+        return errorResponse(res, {statusCode: 401, message: 'No user authenticated'})
     }
 
     try {
@@ -14,7 +15,7 @@ export const authJWT = (req, res, next) => {
         req.user = jwtContent;
         next();
     } catch (error) {
-        return res.status(401).json({ status:'error', payload:'Token inválido' });
+        return errorResponse(res, {statusCode: 401, message: 'Invalid token'})
     }
 };
 
@@ -25,7 +26,7 @@ export const passportCurrent = (req, res, next) => {
     }
 
     if (!user) {
-      return res.status(401).json({ status:'error', payload:'Token inexistente o inválido' });
+      return errorResponse(res, {statusCode: 401, message: 'Invalid or missing token'})
     }
 
     req.user = user;
@@ -36,7 +37,7 @@ export const passportCurrent = (req, res, next) => {
 export const authorizeRole = (...allowedRoles) => {
   return (req,res,next) => {
     if (!allowedRoles.includes(req.user.role)) {
-      return res.status(403).json({ status: 'error', payload: 'Usuario no autorizado'})
+      return errorResponse(res, {statusCode: 402, message: 'Unauthorized user'})
     }
     next()
   }
@@ -46,11 +47,11 @@ export const authorizeCartOwner = (req,res,next) => {
   const { cid } = req.params
 
   if (!req.user) {
-    return res.status(401).json({ status: 'error', payload: 'No autenticado' })
+    return errorResponse(res, {statusCode: 401, message: 'No user authenticated'})
   }
 
   if (req.user.cart.toString() !== cid) {
-    return res.status(403).json({ status: 'error', payload: 'No autorizado para este carrito' })
+    return errorResponse(res, {statusCode: 403, message: 'User unauthorized to edit this cart'})
   }
 
   next()
