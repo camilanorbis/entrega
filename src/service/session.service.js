@@ -13,7 +13,7 @@ export default class SessionService {
 
     async updateUserPassword (token, password, confirmPassword) {
         if (password !== confirmPassword) {
-            return ({ 'error': "Las contraseñas no coinciden" })
+            return ({ 'error': "Passwords don't match" })
         }
         
         const user = await this.sessionDao.getUserByFilter({
@@ -22,12 +22,12 @@ export default class SessionService {
         })
         
         if (!user) {
-            return ({ 'error': "Token inválido o expirado" })
+            return ({ 'error': "Invalid or expired token" })
         }
 
         const oldPassword = user.password
         if (validaPass(password,oldPassword)){
-            return ({'error': 'La contraseña nueva no puede ser igual a la anterior'})
+            return ({'error': 'New password can not be same as old one'})
         }
 
         const hashedPassword = createHash(password)

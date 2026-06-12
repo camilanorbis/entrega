@@ -17,6 +17,278 @@ export const swaggerSpec = swaggerJSDoc({
 
         components: {
 
+            schemas: {
+                
+                Product: {
+                    type: 'object',
+                    properties: {
+                        _id: {
+                            type: 'string',
+                            example: '65sd4f65sdf4sdf'
+                        },
+                        title: {
+                            type: 'string',
+                            example: 'Shampoo'
+                        },
+                        description: {
+                            type: 'string',
+                            example: 'Shampoo con acido hialuronico'
+                        },
+                        code: {
+                            type: 'string',
+                            example: 'SH159'
+                        },
+                        price: {
+                            type: 'number',
+                            example: 430
+                        },
+                        status: {
+                            type: 'boolean',
+                            example: true
+                        },
+                        stock: {
+                            type: 'number',
+                            example: 10
+                        },
+                        category: {
+                            type: 'string',
+                            example: 'Cuidado personal'
+                        },
+                        thumbnails: {
+                            type: 'array',
+                            items: 'string'
+                        }
+                    }
+                },
+
+                ProductResponse: {
+                    type: 'object',
+                    properties: {
+                        status: {
+                            type: 'string',
+                            example: 'success'
+                        },
+                        message: {
+                            type: 'string',
+                            example: 'Product found'
+                        },
+                        payload: {
+                            $ref: '#/components/schemas/Product'
+                        }
+                    }
+                },
+
+                ProductsResponse: {
+                    type: 'object',
+                    properties: {
+                        status: {
+                            type: 'string',
+                            example: 'success'
+                        },
+                        message: {
+                            type: 'string',
+                            example: 'Products list'
+                        },
+                        payload: {
+                            type: 'object',
+                            properties: {
+                                productsList: {
+                                    type: 'array',
+                                    items: {
+                                        $ref: '#/components/schemas/Product'
+                                    }
+                                },
+                                totalPages: {
+                                    type: 'number',
+                                    example: 3
+                                },
+                                prevPage: {
+                                    type: 'number',
+                                    example: 2
+                                },
+                                nextPage: {
+                                    type: 'number',
+                                    example: null
+                                },
+                                page: {
+                                    type: 'number',
+                                    example: 3
+                                },
+                                hasPrevPage: {
+                                    type: 'boolean',
+                                    example: true
+                                },
+                                hasNextPage: {
+                                    type: 'boolean',
+                                    example: false
+                                },
+                                prevLink: {
+                                    type: 'string',
+                                    example: 'http://localhost:8080/api/products?limit=5&page=2&sort=1'
+                                },
+                                nextLink: {
+                                    type: 'string',
+                                    example: null
+                                }
+                            }
+                        }
+                    }
+                },
+
+                UpdateResponse: {
+                    type: 'object',
+                    properties: {
+                        status: {
+                            type: 'string',
+                            example: 'success'
+                        },
+                        message: {
+                            type: 'string',
+                            example: 'Product updated successfully'
+                        },
+                        payload: {
+                            type: 'object',
+                            properties: {
+                                productsMatch: {
+                                    type: 'number',
+                                    example: 1
+                                },
+                                productsModified: {
+                                    type: 'number',
+                                    example: 1
+                                }
+                            }
+                        }
+                    }
+                },
+
+                DeleteResponse: {
+                    type: 'object',
+                    properties: {
+                        status: {
+                            type: 'string',
+                            example: 'success'
+                        },
+                        message: {
+                            type: 'string',
+                            example: 'Product deleted successfully'
+                        },
+                        payload: {
+                            type: 'object',
+                            properties: {
+                                productsDeleted: {
+                                    type: 'number',
+                                    example: 1
+                                }
+                            }
+                        }
+                    }
+                },
+
+                ErrorResponse: {
+                    type: 'object',
+                    properties: {
+                        status: {
+                            type: 'string',
+                            example: 'error'
+                        },
+                        message: {
+                            type: 'string',
+                            example: 'Error updating product'
+                        }
+                    }
+                },
+
+                CartProduct: {
+                    type: 'object',
+                    properties: {
+                        productId: {
+                            type: 'string',
+                            example: '6978fd7feee4a42b1e58c950'
+                        },
+                        quantity: {
+                            type: 'number',
+                            example: 1
+                        },
+                        _id: {
+                            type: 'string',
+                            example: '6a2c608c40375d49ccdf88c8'
+                        }
+                    }
+                },
+
+                Cart: {
+                    type: 'object',
+                    properties: {
+                        _id: {
+                            type: 'string',
+                            example: '697a2df7d13c0fb7a7fed23b'
+                        },
+                        products: {
+                            type: 'array',
+                            items: {
+                                $ref: '#/components/schemas/CartProduct'
+                            }
+                        }
+                    }
+                },
+
+                CartResponse: {
+                    type: 'object',
+                    properties: {
+                        status: {
+                            type: 'string',
+                            example: 'success'
+                        },
+                        message: {
+                            type: 'string',
+                            example: 'Product added successfully to cart'
+                        },
+                        payload: {
+                            $ref: '#/components/schemas/Cart'
+                        }
+                    }
+                },
+
+                CartProductsPopulated: {
+                    type: 'object',
+                    properties: {
+                        productId: {
+                            $ref: '#/components/schemas/Product'
+                        },
+                        quantity: {
+                            type: 'number',
+                            example: 3
+                        },
+                        id: {
+                            type: 'string',
+                            example: '54s65df4s65df4s5d4f'
+                        }
+                    }
+                },
+
+                CartProductsPopulatedResponse: {
+                    type: 'object',
+                    properties: {
+                        status: {
+                            type: 'string',
+                            example: 'success'
+                        },
+                        message: {
+                            type: 'string',
+                            example: 'Cart products obtained successfully'
+                        },
+                        payload: {
+                            type: 'array',
+                            items: {
+                                $ref: '#/components/schemas/CartProductsPopulated'
+                            }
+                        }
+                    }
+                }
+
+            }
+
         }
     },
 

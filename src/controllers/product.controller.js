@@ -97,7 +97,14 @@ export const modifyProduct = async (req,res,next) => {
         if (!response)
             return errorResponse(res, {statusCode: 400, message: 'Error updating product'})
 
-        return successResponse(res, {statusCode: 200, message: 'Product updated successfully', payload: response})
+        return successResponse(res, {
+            statusCode: 200, 
+            message: 'Product updated successfully', 
+            payload: {
+                'productsMatch': response.matchedCount,
+                'productsModified': response.modifiedCount
+            }
+        })
     } catch (error) {
         if (error.name === "ValidationError") {
             const mensajes = Object.values(error.errors).map(err => err.message);
@@ -119,7 +126,13 @@ export const deleteProduct = async (req,res,next) => {
         if (!response.acknowledged)
             return errorResponse(res, {statusCode: 400, message: 'Could not delete product'})
 
-        return successResponse(res, {statusCode: 200, message: 'Product deleted successfully', payload: response})
+        return successResponse(res, {
+            statusCode: 200, 
+            message: 'Product deleted successfully', 
+            payload: {
+                'productsDeleted': response.deletedCount
+            }
+        })
     } catch (error) {
         next(error)
     }

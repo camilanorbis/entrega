@@ -53,6 +53,7 @@ export const deleteProductFromCart = async (req,res,next) => {
     try {
         const { cid, pid } = req.params 
         const response = await cartService.deleteProduct(cid,pid)
+        console.log(response)
 
         if (!response)
             return errorResponse(res, {statusCode: 400, message: 'Error deleting product from cart'})

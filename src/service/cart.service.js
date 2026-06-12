@@ -28,10 +28,10 @@ export default class CartService {
         const cart = await this.cartDao.getCartByFilter({ _id: cid })
         const product = await this.productDao.getProductByFilter({ _id: pid })
         if(!cart) {
-            return ({'error': `El carrito con id ${cid} no existe`})
+            return ({'error': `Cart with id ${cid} doesn't exist`})
         }     
         if(!product) {
-            return ({'error': `El producto con id ${pid} no existe`})
+            return ({'error': `Product with id ${pid} doesn't exist`})
         }
 
         const objectPid = new Types.ObjectId(String(pid))
@@ -55,10 +55,10 @@ export default class CartService {
         const product = await this.productDao.getProductByFilter({ _id: pid })
         
         if (!cart) {
-            return ({'error': `El carrito con id ${cid} no existe` })
+            return ({'error': `Cart with id ${cid} doesn't exist` })
         }
         if(!product) {
-            return ({'error': `El producto con id ${pid} no existe` })
+            return ({'error': `Product with id ${pid} doesn't exist` })
         }
         
         const objectPid = new Types.ObjectId(String(pid))
@@ -75,7 +75,7 @@ export default class CartService {
     async updateProductOnCart (cid, pid, quantity) {
         const cart = await this.cartDao.getCartByFilter({ _id: cid })
         if (!cart) {
-            return ({ 'error': `El carrito con id ${cid} no existe` })
+            return ({ 'error': `Cart with id ${cid} doesn't exist` })
         }
                 
         const objectCid = new Types.ObjectId(String(cid))
@@ -83,19 +83,19 @@ export default class CartService {
         const result = await this.cartDao.updateCart({ _id: objectCid, "products.productId": objectPid }, { $set: { "products.$.quantity": quantity }})
                         
         if (result.modifiedCount === 0) 
-            return ({ 'error': `El producto con id ${pid} no esta en el carrito` })
+            return ({ 'error': `Product with id ${pid} is not in cart` })
 
         return await this.cartDao.getCartByFilter({ _id: cid })
     }
 
     async updateAllProducts (cid, newProducts) {
         if (!Array.isArray(newProducts)) {
-            return ({ 'error': 'El body debe ser un arreglo de productos' })
+            return ({ 'error': 'Request body must be an array of products.' })
         }
 
         const cart = await this.cartDao.getCartByFilter({ _id: cid })
         if (!cart) {
-            return ({ 'error': `El carrito con id ${cid} no existe` })
+            return ({ 'error': `Cart with id ${cid} doesn't exist` })
         }
 
         await this.cartDao.updateCart({ _id: cid }, { $set: { products: newProducts }})
@@ -105,7 +105,7 @@ export default class CartService {
     async deleteAllProducts (cid) {
         const cart = await this.cartDao.getCartByFilter({ _id: cid })
         if (!cart) {
-            return ({ 'error': `El carrito con id ${cid} no existe` })
+            return ({ 'error': `Cart with id ${cid} doesn't exist` })
         } 
 
         await this.cartDao.updateCart({ _id: cid }, { $set: { products: [] }})
@@ -117,7 +117,7 @@ export default class CartService {
         const cart = await this.cartDao.getCartByFilter({ _id: cid })
         await cart.populate("products.productId")
         if (!cart) {
-            return ({ 'error': `El carrito con id ${cid} no existe` })
+            return ({ 'error': `Cart with id ${cid} doesn't exist` })
         }
 
         //chequeo que cada producto tenga el stock necesario, si no lo tiene lo saco del carrito
@@ -130,7 +130,7 @@ export default class CartService {
         }
         
         if (cart.products.length === 0) {
-            return ({ 'error': 'El carrito esta vació' })
+            return ({ 'error': 'Cart is empty' })
         }
 
         //resto el stock de los productos del carrito
