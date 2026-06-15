@@ -10,7 +10,7 @@ export const swaggerSpec = swaggerJSDoc({
         },
         servers: [
             {
-                url: 'http://localhost:3000',
+                url: 'http://localhost:8080',
                 description: 'Servidor local'
             }
         ],
@@ -56,9 +56,92 @@ export const swaggerSpec = swaggerJSDoc({
                         },
                         thumbnails: {
                             type: 'array',
-                            items: 'string'
+                            items: {
+                                type: 'string'
+                            }
                         }
                     }
+                },
+
+                ProductInput: {
+                    type: 'object',
+                    properties: {
+                        title: {
+                            type: 'string',
+                            example: 'Crema de enjuague amenixil'
+                        },
+                        description: {
+                            type: 'string',
+                            example: 'Shampoo con acido hialuronico'
+                        },
+                        code: {
+                            type: 'string',
+                            example: 'SH159'
+                        },
+                        price: {
+                            type: 'number',
+                            example: 430
+                        },
+                        status: {
+                            type: 'boolean',
+                            example: true
+                        },
+                        stock: {
+                            type: 'number',
+                            example: 10
+                        },
+                        category: {
+                            type: 'string',
+                            example: 'Cuidado personal'
+                        },
+                        thumbnails: {
+                            type: 'array',
+                            items: {
+                                type: 'string'
+                            }
+                        }
+                    },
+                    required: ['title','description','code','price','status','stock','category','thumbnails']
+                },
+
+                ProductUpdateInput: {
+                    type: 'object',
+                    properties: {
+                        title: {
+                            type: 'string',
+                            example: 'Crema de enjuague amenixil'
+                        },
+                        description: {
+                            type: 'string',
+                            example: 'Shampoo con acido hialuronico'
+                        },
+                        code: {
+                            type: 'string',
+                            example: 'SH159'
+                        },
+                        price: {
+                            type: 'number',
+                            example: 430
+                        },
+                        status: {
+                            type: 'boolean',
+                            example: true
+                        },
+                        stock: {
+                            type: 'number',
+                            example: 10
+                        },
+                        category: {
+                            type: 'string',
+                            example: 'Cuidado personal'
+                        },
+                        thumbnails: {
+                            type: 'array',
+                            items: {
+                                type: 'string'
+                            }
+                        }
+                    },
                 },
 
                 ProductResponse: {
@@ -194,7 +277,7 @@ export const swaggerSpec = swaggerJSDoc({
                         },
                         message: {
                             type: 'string',
-                            example: 'Error updating product'
+                            example: 'Internal server error'
                         }
                     }
                 },

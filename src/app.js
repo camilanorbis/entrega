@@ -19,7 +19,7 @@ import { errorHandler } from "./middleware/errorHandler.js"
 const basePathProducts = "/api/products"
 const basePathCarts = "/api/carts"
 const basePathSessions = "/api/sessions"
-const basePathDocs = 'api/docs'
+const basePathDocs = '/api/docs'
 
 const app = express();
 
