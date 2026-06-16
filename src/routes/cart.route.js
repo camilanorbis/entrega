@@ -204,7 +204,7 @@ router.delete("/:cid/product/:pid", deleteProductFromCart)
  *                          $ref: '#/components/schemas/ErrorResponse'
  *  
 */
-router.put("/:cid", updateCartProducts)
+router.put("/:cid", updateCartProducts) //puse mal lo que hace. recibe lista de productos y reemplaza todo lo que estaba en el cart.
 
 /**
  * @swagger

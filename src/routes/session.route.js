@@ -5,6 +5,29 @@ import { passportCurrent } from "../middleware/auth.js";
 
 const router = express.Router()
 
+/**
+ * @swagger
+ * /api/sessions:
+ *  post:
+ *      summary: Create new user
+ *      description: Creates a new user with data recieved in body
+ *      tags:
+ *          - Users
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: '#/components/schemas/UseInput'
+ *      responses:
+ *          201:
+ *              description: User created successfully
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/UserResponse'
+ *  
+*/
 router.post("/register", passport.authenticate("registro", {session: false, failureRedirect: "/api/sessions/error_register"}), createUser)
 
 router.get("/error_register", getErrorRegister)

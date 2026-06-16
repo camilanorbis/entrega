@@ -37,7 +37,7 @@ export const passportCurrent = (req, res, next) => {
 export const authorizeRole = (...allowedRoles) => {
   return (req,res,next) => {
     if (!allowedRoles.includes(req.user.role)) {
-      return errorResponse(res, {statusCode: 402, message: 'Unauthorized user'})
+      return errorResponse(res, {statusCode: 403, message: 'Unauthorized user'})
     }
     next()
   }

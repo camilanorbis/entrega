@@ -11,16 +11,16 @@ export default class CartService {
     }
 
     async createCart () {
-        return await this.cartDao.createCart()
-    }
-
-    async getCartById (cid) {
-        return await this.cartDao.getCartByFilter({ _id: cid })
+        const result = await this.cartDao.createCart()
+        if (!result)
+            throw new Error('Unable to create cart')        
+        return result
     }
 
     async getCartWithProducts (cid) {
         const cart = await this.cartDao.getCartByFilter({ _id: cid })
-        if (!cart) return null
+        if (!cart)
+            throw new NotFoundError(`Cart with id ${cid} doesn't exist`)
         return cart.populate("products.productId")
     }
 
@@ -28,10 +28,10 @@ export default class CartService {
         const cart = await this.cartDao.getCartByFilter({ _id: cid })
         const product = await this.productDao.getProductByFilter({ _id: pid })
         if(!cart) {
-            return ({'error': `Cart with id ${cid} doesn't exist`})
+            throw new NotFoundError(`Cart with id ${cid} doesn't exist`)
         }     
         if(!product) {
-            return ({'error': `Product with id ${pid} doesn't exist`})
+            throw new NotFoundError(`Product with id ${pid} doesn't exist`)
         }
 
         const objectPid = new Types.ObjectId(String(pid))
@@ -41,10 +41,12 @@ export default class CartService {
         )
         
         if (result.modifiedCount === 0) {
-            await this.cartDao.updateCart(
+            const sndResult = await this.cartDao.updateCart(
                 { _id: cid },
                 { $push: { products: { productId: objectPid, quantity: 1 }}}
             )
+            if (sndResult.modifiedCount === 0) 
+                throw new Error('Product was not added to cart')
         }
 
         return await this.cartDao.getCartByFilter({ _id: cid })
@@ -55,60 +57,65 @@ export default class CartService {
         const product = await this.productDao.getProductByFilter({ _id: pid })
         
         if (!cart) {
-            return ({'error': `Cart with id ${cid} doesn't exist` })
+            throw new NotFoundError(`Cart with id ${cid} doesn't exist`)
         }
         if(!product) {
-            return ({'error': `Product with id ${pid} doesn't exist` })
+            throw new NotFoundError(`Product with id ${pid} doesn't exist`)
         }
         
         const objectPid = new Types.ObjectId(String(pid))
         const objectCid = new Types.ObjectId(String(cid))
-        await this.cartDao.updateCart(
+        const result = await this.cartDao.updateCart(
             { _id: objectCid }, 
             { $pull: { products: { productId: objectPid }}}
         )
+
+        if (result.modifiedCount === 0) {
+            throw new Error('Product was not removed from cart')
+        }
         
         return await this.cartDao.getCartByFilter({ _id: cid })
-
     }
 
     async updateProductOnCart (cid, pid, quantity) {
         const cart = await this.cartDao.getCartByFilter({ _id: cid })
-        if (!cart) {
-            return ({ 'error': `Cart with id ${cid} doesn't exist` })
-        }
+        if (!cart) 
+            throw new NotFoundError(`Cart with id ${cid} doesn't exist`)
                 
         const objectCid = new Types.ObjectId(String(cid))
         const objectPid = new Types.ObjectId(String(pid))
         const result = await this.cartDao.updateCart({ _id: objectCid, "products.productId": objectPid }, { $set: { "products.$.quantity": quantity }})
                         
         if (result.modifiedCount === 0) 
-            return ({ 'error': `Product with id ${pid} is not in cart` })
+            throw new Error(`Product with id ${pid} is not in cart`)
 
         return await this.cartDao.getCartByFilter({ _id: cid })
     }
 
     async updateAllProducts (cid, newProducts) {
-        if (!Array.isArray(newProducts)) {
-            return ({ 'error': 'Request body must be an array of products.' })
-        }
+        if (!Array.isArray(newProducts)) 
+            throw new BadRequestError('Request body must be an array of products.')          
 
         const cart = await this.cartDao.getCartByFilter({ _id: cid })
-        if (!cart) {
-            return ({ 'error': `Cart with id ${cid} doesn't exist` })
-        }
+        if (!cart) 
+            throw new NotFoundError(`Cart with id ${cid} doesn't exist`)
 
-        await this.cartDao.updateCart({ _id: cid }, { $set: { products: newProducts }})
+        const result = await this.cartDao.updateCart({ _id: cid }, { $set: { products: newProducts }})
+        if (result.modifiedCount === 0)
+            throw new Error('Cart not updated')
+
         return await this.cartDao.getCartByFilter({ _id: cid })
     }
 
     async deleteAllProducts (cid) {
         const cart = await this.cartDao.getCartByFilter({ _id: cid })
-        if (!cart) {
-            return ({ 'error': `Cart with id ${cid} doesn't exist` })
-        } 
+        if (!cart) 
+            throw new NotFoundError(`Cart with id ${cid} doesn't exist`)
 
-        await this.cartDao.updateCart({ _id: cid }, { $set: { products: [] }})
+        const result = await this.cartDao.updateCart({ _id: cid }, { $set: { products: [] }})
+        if (result.modifiedCount === 0)
+            throw new Error('Cart not updated')
+
         return await this.cartDao.getCartByFilter({ _id: cid })
     }
 
@@ -116,9 +123,8 @@ export default class CartService {
         //obtengo carrito
         const cart = await this.cartDao.getCartByFilter({ _id: cid })
         await cart.populate("products.productId")
-        if (!cart) {
-            return ({ 'error': `Cart with id ${cid} doesn't exist` })
-        }
+        if (!cart) 
+            throw new NotFoundError(`Cart with id ${cid} doesn't exist`)
 
         //chequeo que cada producto tenga el stock necesario, si no lo tiene lo saco del carrito
         for (const item of cart.products) {
@@ -130,7 +136,7 @@ export default class CartService {
         }
         
         if (cart.products.length === 0) {
-            return ({ 'error': 'Cart is empty' })
+            throw new Error('Cart is empty')
         }
 
         //resto el stock de los productos del carrito
@@ -165,6 +171,9 @@ export default class CartService {
                                                             { path: "userId", select: "first_name last_name" }
                                                         ]
                                                     )
+
+        if (!ticketDoc || !newTicket)
+            throw new Error('Error generating ticket')
 
         //vaciar carrito
         await this.cartDao.updateCart({ _id: cid }, { $set: { products: [] }})

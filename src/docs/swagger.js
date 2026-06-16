@@ -268,20 +268,6 @@ export const swaggerSpec = swaggerJSDoc({
                     }
                 },
 
-                ErrorResponse: {
-                    type: 'object',
-                    properties: {
-                        status: {
-                            type: 'string',
-                            example: 'error'
-                        },
-                        message: {
-                            type: 'string',
-                            example: 'Internal server error'
-                        }
-                    }
-                },
-
                 CartProduct: {
                     type: 'object',
                     properties: {
@@ -461,7 +447,131 @@ export const swaggerSpec = swaggerJSDoc({
                             $ref: '#/components/schemas/Ticket'
                         }
                     }
-                }
+                },
+
+                UseInput: {
+                    type: 'object',
+                    properties: {
+                        first_name: {
+                            type: 'string',
+                            example: 'Lucia'
+                        },
+                        last_name: {
+                            type: 'string',
+                            example: 'Perez'
+                        },
+                        age: {
+                            type: 'number',
+                            example: 31
+                        },
+                        email: {
+                            type: 'string',
+                            example: 'luciaperez@gmail.com'
+                        },
+                        password: {
+                            type: 'string',
+                            example: 'lucia1234'
+                        }
+                    },
+                    required: ['first_name', 'last_name', 'email', 'password']
+                },
+
+                User: {
+                    type: 'object',
+                    properties: {
+                        first_name: {
+                            type: 'string',
+                            example: 'Lucia'
+                        },
+                        last_name: {
+                            type: 'string',
+                            example: 'Perez'
+                        },
+                        email: {
+                            type: 'string',
+                            example: 'luciaperez@gmail.com'
+                        },
+                        age: {
+                            type: 'number',
+                            example: 31
+                        },
+                        password: {
+                            type: 'string',
+                            example: '$2b$10$hUjw9p5bb0Imj.MuDg15O.JzSNCxfPJyppYRYfdkPqTKT7DSO8D1C'
+                        },
+                        cart: {
+                            type: 'string',
+                            example: '6a3173ce349a109789353035'
+                        },
+                        role: {
+                            type: 'string',
+                            example: 'user'
+                        },
+                        id: {
+                            type: 'string',
+                            example: '6a3173ce349a109789353037'
+                        }
+                    }
+                },
+
+                UserResponse: {
+                    type: 'object',
+                    properties: {
+                        status: {
+                            type: 'string',
+                            example: 'success'
+                        },
+                        payload: {
+                            $ref: '#/components/schemas/User'
+                        }
+                    }
+                },
+
+                LoginInput: {
+                    type: 'object',
+                    properties: {
+                        email: {
+                            type: 'string',
+                            example: 'uprueba@gmail.com'
+                        },
+                        password: {
+                            type: 'string',
+                            example: 123456
+                        }
+                    }
+                },
+
+                LoginResponse: {
+                    
+                },
+
+                ErrorResponse: {
+                    type: 'object',
+                    properties: {
+                        status: {
+                            type: 'string',
+                            example: 'error'
+                        },
+                        message: {
+                            type: 'string',
+                            example: 'Operation failed'
+                        }
+                    }
+                },
+
+                ServerErrorResponse: {
+                    type: 'object',
+                    properties: {
+                        status: {
+                            type: 'string',
+                            example: 'error'
+                        },
+                        message: {
+                            type: 'string',
+                            example: 'Internal server error'
+                        }
+                    }
+                },
 
             }
 

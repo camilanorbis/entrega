@@ -12,38 +12,40 @@ export default class SessionService {
     }
 
     async updateUserPassword (token, password, confirmPassword) {
-        if (password !== confirmPassword) {
-            return ({ 'error': "Passwords don't match" })
-        }
+        if (password !== confirmPassword) 
+            throw new Error("Passwords don't match")
         
         const user = await this.sessionDao.getUserByFilter({
             resetToken: token,
             resetTokenExpires: { $gt: new Date() }
         })
         
-        if (!user) {
-            return ({ 'error': "Invalid or expired token" })
-        }
+        if (!user) 
+            throw new Error('Invalid or expired token')
 
         const oldPassword = user.password
-        if (validaPass(password,oldPassword)){
-            return ({'error': 'New password can not be same as old one'})
-        }
+        if (validaPass(password,oldPassword))
+            throw new Error('New password can not be same as old one')
 
         const hashedPassword = createHash(password)
-        return await this.sessionDao.updateUser(
+        const result =  await this.sessionDao.updateUser(
             { _id: user._id },
             { 
                 $set: { password: hashedPassword },
                 $unset: { resetToken: "", resetTokenExpires: "" }
             }
         )
+
+        if (result.modifiedCount === 0)
+            throw new Error('Error updating password')
+
+        return result
     }
 
     async saveResetToken (userId, token) {
         const expiration = new Date(Date.now() + 60 * 60 * 1000)
 
-        return await this.sessionDao.updateUser (
+        const result = await this.sessionDao.updateUser (
             { _id: userId },
             {
             $set: {
@@ -52,6 +54,11 @@ export default class SessionService {
             }
             }
         )
+
+        if (result.modifiedCount === 0)
+            throw new Error('Error setting reset token')
+
+        return result
     }  
 
     async sendRecoveryEmail (userEmail, resetLink) {
