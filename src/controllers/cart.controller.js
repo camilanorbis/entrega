@@ -77,7 +77,7 @@ export const updateCartProducts = async (req,res,next) => {
             return errorResponse(res, {statusCode: 400, message: 'Error updating cart'})
         
         if (response.error)
-            return errorResponse(res, {statusCode: 404, message: response.error})
+            return errorResponse(res, {statusCode: 400, message: response.error})
 
         return successResponse(res, {statusCode: 200, message: 'Cart products updated successfully', payload: response})
     } catch (error) {
@@ -95,7 +95,7 @@ export const updateProductQuantity = async (req,res,next) => {
             return errorResponse(res, {statusCode: 400, message: 'Error updating cart'})
 
         if (response.error)
-            return errorResponse(res, {statusCode: 404, message: response.error})
+            return errorResponse(res, {statusCode: 400, message: response.error})
 
         return successResponse(res, {statusCode: 200, message: 'Product quantity updated successfully', payload: response})
     } catch (error) {
@@ -113,7 +113,7 @@ export const deleteProductsFromCart = async (req,res,next) => {
             return errorResponse(res, {statusCode: 400, message: 'Error deleting products from cart'})
 
         if (response.error)
-            return errorResponse(res, {statusCode: 404, message: response.error})
+            return errorResponse(res, {statusCode: 400, message: response.error})
 
         return successResponse(res, {statusCode: 200, message: 'Products deleted successfully from cart', payload: response})
     } catch (error) {
@@ -131,7 +131,7 @@ export const generatePurchaseTicket = async (req,res,next) => {
             return errorResponse(res, {statusCode: 400, message: 'Error generating purchase ticket'})
         
         if (response.error)
-            return errorResponse(res, {statusCode: 404, message: response.error})
+            return errorResponse(res, {statusCode: 400, message: response.error})
 
         return successResponse(res, {statusCode: 200, message: 'Purchase ticket generated successfully', payload: response})
     } catch (error) {

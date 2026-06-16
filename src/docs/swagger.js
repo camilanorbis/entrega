@@ -316,6 +316,35 @@ export const swaggerSpec = swaggerJSDoc({
                     }
                 },
 
+                UpdateProductsCartInput: {
+                    type: 'array',
+                    items: {
+                        type: 'object',
+                        properties: {
+                            productId: {
+                                type: 'string',
+                                example: '6999f47bf9fa39539f6790c2'
+                            },
+                            quantity: {
+                                type: 'number',
+                                example: 11
+                            }
+                        },
+                        required: ['productId','quantity']
+                    } 
+                },
+                
+                UpdateProductCartInput: {
+                    type: 'object',
+                    properties: {
+                        quantity: {
+                            type: 'number',
+                            example: 11
+                        }    
+                    },
+                    required: ['quantity']
+                },
+
                 CartResponse: {
                     type: 'object',
                     properties: {
@@ -366,6 +395,70 @@ export const swaggerSpec = swaggerJSDoc({
                             items: {
                                 $ref: '#/components/schemas/CartProductsPopulated'
                             }
+                        }
+                    }
+                },
+
+                Ticket: {
+                    type: 'object',
+                    properties: {
+                        ticketNumber: {
+                            type: 'string',
+                            example: 'WYP9YYO6'
+                        },
+                        products: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                properties: {
+                                    title: {
+                                        type: 'string',
+                                        example: 'Crema de enjuague amenixil'
+                                    },
+                                    quantity: {
+                                        type: 'number',
+                                        example: 3
+                                    }
+                                }
+                            }
+                        },
+                        user: {
+                            type: 'object',
+                            properties: {
+                                first_name: {
+                                    type: 'string',
+                                    example: 'Lucia'
+                                },
+                                last_name: {
+                                    type: 'string',
+                                    example: 'Perez'
+                                }
+                            }
+                        },
+                        date: {
+                            type: 'string',
+                            example: 'Martes, 16 de junio de 2026'
+                        },
+                        totalAmount: {
+                            type: 'number',
+                            example: 650
+                        }
+                    }
+                },
+
+                TicketResponse: {
+                    type: 'object',
+                    properties: {
+                        status: {
+                            type: 'string',
+                            example: 'success'
+                        },
+                        message: {
+                            type: 'string',
+                            example: 'Purchase ticket generated successfully'
+                        },
+                        payload: {
+                            $ref: '#/components/schemas/Ticket'
                         }
                     }
                 }
